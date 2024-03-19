@@ -1,5 +1,6 @@
 package com.example.campsign
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -8,6 +9,11 @@ import android.widget.EditText
 import android.widget.Toast
 
 class SignUpActivity : AppCompatActivity() {
+
+    companion object {
+        const val ACTIVITY_RESULT_ID = "id"
+        const val ACTIVITY_RESULT_PW = "pw"
+    }
 
     private lateinit var nameEditText: EditText
     private lateinit var idEditText: EditText
@@ -31,7 +37,15 @@ class SignUpActivity : AppCompatActivity() {
     }
 
     private val signUpButtonOnClickListener: (View) -> Unit = {
-        if(inputValidation()) finish()
+        if(inputValidation()) {
+            setResult(RESULT_OK,
+                Intent().apply {
+                    putExtra(ACTIVITY_RESULT_ID, idEditText.text.toString())
+                    putExtra(ACTIVITY_RESULT_PW, pwEditText.text.toString())
+                }
+            )
+            finish()
+        }
         else Toast.makeText(this, "입력되지 않은 정보가 있습니다", Toast.LENGTH_SHORT).show()
     }
 

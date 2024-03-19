@@ -8,6 +8,8 @@ import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 
 class SignInActivity : AppCompatActivity() {
 
@@ -19,6 +21,19 @@ class SignInActivity : AppCompatActivity() {
     private lateinit var pwEditText: EditText
     private lateinit var signInButton: Button
     private lateinit var signUpButton: Button
+
+    private val signUpActivityLauncher =
+        registerForActivityResult(StartActivityForResult()) { resultNullable ->
+            resultNullable?.let { result ->
+                Log.e("TAG", "result: $result")
+                if(result.resultCode == RESULT_OK) {
+                    result.data?.let {
+                        idEditText.setText(it.getStringExtra(SignUpActivity.ACTIVITY_RESULT_ID))
+                        pwEditText.setText(it.getStringExtra(SignUpActivity.ACTIVITY_RESULT_PW))
+                    }
+                }
+            }
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,10 +54,11 @@ class SignInActivity : AppCompatActivity() {
 
     private val signInButtonClickListener: (View) -> Unit = {
         if(inputValidation()) {
-            val intent = Intent(this, HomeActivity::class.java)
-            intent.putExtra(ID_EXTRA, idEditText.text.trim().toString())
-            Log.e("TAG", "idEditText.text.trim(): ${idEditText.text.trim()}")
-            startActivity(intent)
+            startActivity(
+                Intent(this, HomeActivity::class.java).apply {
+                    putExtra(ID_EXTRA, idEditText.text.trim().toString())
+                }
+            )
             Toast.makeText(this, "로그인 성공", Toast.LENGTH_SHORT).show()
         } else {
             Toast.makeText(this, "아이디/비밀번호를 확인해주세요", Toast.LENGTH_SHORT).show()
@@ -50,8 +66,7 @@ class SignInActivity : AppCompatActivity() {
     }
 
     private val signUpButtonClickListener: (View) -> Unit = {
-        val intent = Intent(this, SignUpActivity::class.java)
-        startActivity(intent)
+        signUpActivityLauncher.launch(Intent(this, SignUpActivity::class.java))
     }
 
     private fun inputValidation(): Boolean {
