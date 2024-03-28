@@ -54,4 +54,16 @@ class SignUpActivity : AppCompatActivity() {
                 && idEditText.text.trim().isNotEmpty()
                 && pwEditText.text.trim().isNotEmpty()
     }
+
+    private fun inputValidationV2(): Boolean {
+        val pattern = "^[a-zA-Z0-9]+@[a-zA-Z]+.[a-z]+$"
+        return nameEditText.text.toString().trim().matches(pattern.toRegex())
+    }
+
+
+
+    fun isYoutubeUrl(link: String): Boolean {
+        val pattern = "^(http(s)?:\\/\\/)?((w){3}.)?youtu(be|.be)?(\\.com)?\\/.+"
+        return !link.isEmpty() && link.matches(pattern.toRegex())
+    }
 }
