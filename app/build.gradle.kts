@@ -33,9 +33,16 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    viewBinding {
+        enable = true
+    }
 }
 
 dependencies {
+
+    implementation("androidx.activity:activity:1.8.2")
+    implementation("androidx.activity:activity-ktx:1.8.2")
+
     implementation("com.google.android.material:material:1.7.0")
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.appcompat:appcompat:1.6.1")

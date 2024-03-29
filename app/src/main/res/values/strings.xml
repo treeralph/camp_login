@@ -9,4 +9,10 @@
     <string name="sign_in_button_text">로그인</string>
     <string name="sign_up_button_text">회원가입</string>
     <string name="exit_button_text">종료</string>
+    <string name="name_invalidation_indic_text">이름을 두글자 이상 입력해주세요</string>
+    <string name="id_invalidation_indic_text">이메일을 입력하세요</string>
+    <string name="pw_invalidation_indic_text">
+        비밀번호는 특수문자, 대문자, 문자, 숫자가 1개 이상씩 총 8글자 이상으로 설정해주세요
+    </string>
+
 </resources>

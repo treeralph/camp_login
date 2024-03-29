@@ -1,12 +1,15 @@
 package com.example.campsign
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
-import android.widget.Button
-import android.widget.EditText
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.widget.addTextChangedListener
+import androidx.lifecycle.ViewModelProvider
+import com.example.campsign.databinding.ActivitySignUpBinding
+import com.example.campsign.viewmodel.SignUpViewModel
+
 
 class SignUpActivity : AppCompatActivity() {
 
@@ -15,55 +18,82 @@ class SignUpActivity : AppCompatActivity() {
         const val ACTIVITY_RESULT_PW = "pw"
     }
 
-    private lateinit var nameEditText: EditText
-    private lateinit var idEditText: EditText
-    private lateinit var pwEditText: EditText
-    private lateinit var signUpButton: Button
-
+    private val binding by lazy { ActivitySignUpBinding.inflate(layoutInflater) }
+    private val viewModel: SignUpViewModel by lazy {
+        ViewModelProvider(this)[SignUpViewModel::class.java]
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_sign_up)
+        setContentView(binding.root)
 
         initView()
+        initViewModel()
     }
 
     private fun initView() {
-        nameEditText = findViewById(R.id.signUpNameEditText)
-        idEditText = findViewById(R.id.signUpIdEditText)
-        pwEditText = findViewById(R.id.signUpPwEditText)
-        signUpButton = findViewById(R.id.signUpSignUpButton)
+        binding.signUpNameEditText.addTextChangedListener(
+            onTextChanged = { text, _, _, _ ->
+                viewModel.nameOnChanged(text.toString())
+            },
+        )
 
-        signUpButton.setOnClickListener(signUpButtonOnClickListener)
+        binding.signUpIdEditText.addTextChangedListener(
+            onTextChanged = { text, _, _, _ ->
+                viewModel.idOnChanged(text.toString())
+            }
+        )
+
+        binding.signUpPwEditText.addTextChangedListener(
+            onTextChanged = { text, _, _, _ ->
+                viewModel.pwOnChanged(text.toString())
+            }
+        )
+
+        binding.signUpSignUpButton.setOnClickListener(signUpButtonOnClickListener)
+    }
+
+    private fun initViewModel() {
+        viewModel.name.observe(this) {
+            if(!viewModel.isValidName() && it.isNotEmpty()) {
+                binding.signUpNameEditText.error =
+                    resources.getString(R.string.name_invalidation_indic_text)
+            }
+        }
+
+        viewModel.id.observe(this) {
+            if(!viewModel.isValidId() && it.isNotEmpty()) {
+                binding.signUpIdEditText.error =
+                    resources.getString(R.string.id_invalidation_indic_text)
+            }
+        }
+
+        viewModel.pw.observe(this) {
+            if(!viewModel.isValidPw() && it.isNotEmpty()) {
+                binding.signUpPwEditText.error =
+                    resources.getString(R.string.pw_invalidation_indic_text)
+            }
+        }
     }
 
     private val signUpButtonOnClickListener: (View) -> Unit = {
-        if(inputValidation()) {
+        if(viewModel.isValid()) {
             setResult(RESULT_OK,
                 Intent().apply {
-                    putExtra(ACTIVITY_RESULT_ID, idEditText.text.toString())
-                    putExtra(ACTIVITY_RESULT_PW, pwEditText.text.toString())
+                    putExtra(ACTIVITY_RESULT_ID, viewModel.id.value)
+                    putExtra(ACTIVITY_RESULT_PW, viewModel.pw.value)
                 }
             )
+            Toast.makeText(
+                this,
+                "이름: ${viewModel.name.value}, " +
+                        "아이디: ${viewModel.id.value}, " +
+                        "비밀번호: ${viewModel.pw.value}",
+                Toast.LENGTH_SHORT).show()
             finish()
         }
-        else Toast.makeText(this, "입력되지 않은 정보가 있습니다", Toast.LENGTH_SHORT).show()
-    }
-
-    private fun inputValidation(): Boolean {
-        return nameEditText.text.trim().isNotEmpty()
-                && idEditText.text.trim().isNotEmpty()
-                && pwEditText.text.trim().isNotEmpty()
-    }
-
-    private fun inputValidationV2(): Boolean {
-        val pattern = "^[a-zA-Z0-9]+@[a-zA-Z]+.[a-z]+$"
-        return nameEditText.text.toString().trim().matches(pattern.toRegex())
-    }
-
-
-
-    fun isYoutubeUrl(link: String): Boolean {
-        val pattern = "^(http(s)?:\\/\\/)?((w){3}.)?youtu(be|.be)?(\\.com)?\\/.+"
-        return !link.isEmpty() && link.matches(pattern.toRegex())
+        else Toast.makeText(
+            this,
+            "모든 정보를 알맞게 입력해주세요",
+            Toast.LENGTH_SHORT).show()
     }
 }
