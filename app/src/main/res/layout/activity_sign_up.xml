@@ -42,7 +42,8 @@
             android:layout_height="wrap_content"
             android:text=""
             android:hint="@string/sign_name_text_indic"
-            style="@style/InfoTextIndicStyle"/>
+            style="@style/InfoTextIndicStyle"
+            android:tag="@string/name_edit_text_tag"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -54,7 +55,8 @@
             android:layout_height="wrap_content"
             android:text=""
             android:hint="@string/sign_id_text_indic"
-            style="@style/InfoTextIndicStyle"/>
+            style="@style/InfoTextIndicStyle"
+            android:tag="@string/id_edit_text_tag"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -67,13 +69,15 @@
             android:text=""
             android:hint="@string/sign_pw_text_indic"
             android:inputType="textPassword"
-            style="@style/InfoTextIndicStyle"/>
+            style="@style/InfoTextIndicStyle"
+            android:tag="@string/pw_edit_text_tag"/>
         <Button
             android:id="@+id/signUpSignUpButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/sign_up_button_text"
             style="@style/ButtonTextStyle"
+            android:enabled="false"
             android:layout_marginTop="32dp"/>
     </LinearLayout>
 

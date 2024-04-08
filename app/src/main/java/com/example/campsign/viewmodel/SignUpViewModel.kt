@@ -4,7 +4,11 @@ import android.util.Patterns
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.campsign.ID_TAG
+import com.example.campsign.NAME_TAG
+import com.example.campsign.PW_TAG
 import java.util.regex.Pattern
+
 
 class SignUpViewModel: ViewModel() {
 
@@ -27,36 +31,32 @@ class SignUpViewModel: ViewModel() {
     private val _name = MutableLiveData("")
     private val _id = MutableLiveData("")
     private val _pw = MutableLiveData("")
+    private val _makeAble = MutableLiveData(false)
 
     val name: LiveData<String> = _name
     val id: LiveData<String> = _id
     val pw: LiveData<String> = _pw
+    val makeAble: LiveData<Boolean> = _makeAble
 
-    fun nameOnChanged(input: String) {
-        _name.value = input
+    fun onChanged(input: String, tag: String) {
+        when(tag) {
+            NAME_TAG -> { _name.value = input }
+            ID_TAG -> { _id.value = input }
+            PW_TAG -> { _pw.value = input }
+            else -> throw Exception()
+        }
+        updateMakeAble()
     }
-
-    fun idOnChanged(input: String) {
-        _id.value = input
-    }
-
-    fun pwOnChanged(input: String) {
-        _pw.value = input
-    }
-
     fun isValidName(): Boolean {
         return nameRegex.matches(_name.value.toString())
     }
-
     fun isValidId(): Boolean {
         return Patterns.EMAIL_ADDRESS.matcher(_id.value.toString()).matches()
     }
-
     fun isValidPw(): Boolean {
         return pwRegex.matcher(_pw.value.toString()).matches()
     }
-
-    fun isValid(): Boolean {
-        return isValidName() && isValidId() && isValidPw()
+    private fun updateMakeAble() {
+        _makeAble.value = isValidName() && isValidId() && isValidPw()
     }
 }
